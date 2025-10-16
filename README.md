@@ -68,7 +68,7 @@ npx prisma db seed
 ### 1.Start services using Docker:
 cd apps
 
-docker-compose up -d redis
+docker-compose up -d redis db
 
 docker ps
 
