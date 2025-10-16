@@ -9,16 +9,27 @@ Supports creating competitions, participant registration, and notifications (sim
 
 - **Structure:**
 competors/
+
 ├─ apps/
+
 │ ├─ backend/ ← NestJS API
+
 | ├─  ├─ prisma/
+
 │     ├─ schema.prisma
+
 │     └─ seed.ts
+
 |
-│ └─ web(frontend)/ ← Next.js app (minimal pages: create competition, register, view mailbox)
+
+│ └─ web(frontend)/ ← Next.js app (minimal pages: create competition, register, 
+
+   view mailbox)
 
 ├─ docker-compose.yml
+
 ├─ package.json
+
 └─ .env.example
 
 ## **docker-compose.yml & .env.example**
@@ -27,66 +38,82 @@ competors/
   - **Redis** queue
   - **NestJS backend** (depends on DB + Redis)
 
-  **.env** 
+  **.env**: 
 DATABASE_URL="postgresql://neondb_owner:npg_jsO0xq7AiwRU@ep-bitter-haze-adjyvfpe-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 JWT_SECRET="supersecret"
 REDIS_HOST=127.0.0.1
 REDIS_PORT=6379
 
-### Prisma Migrations + Seed Script
+### Prisma Migrations + Seed Script: 
 
 Migrations are included in prisma/migrations/
 
 Seed script (prisma/seed.ts) populates the DB with:
 
 2 organizers
+
 5 participants
+
 5 competitions
 
-Run commands:
+### Run commands:
 npx prisma migrate dev 
+
 npx prisma db seed 
 
-1.Start services using Docker:
+### 1.Start services using Docker:
 cd apps
+
 docker-compose up -d redis
+
 docker ps
+
 docker logs redis
 
-2. Install dependencies
+### Install dependencies
 cd apps/backend
+
 npm install
 
 cd apps/web
+
 npm install
 
-3. Run backend
+### Run backend
 cd apps/backend
+
 npm run start:dev
 
-4. Run frontend
+### Run frontend
 cd apps/web
+
 npm run dev
 
-5. Open frontend
+### Open frontend
 http://localhost:3000
 
 
 ### Architecture Notes
+
 Idempotency:
 Registrations are idempotent using idempotencyKey.
+
 Prevents duplicate registration even if requests are retried.
 
 ### Concurrency:
 Multiple users registering at the same time handled safely with:
 
 Database transactions:
+
 Redis + Bull queues for asynchronous jobs (notifications/reminders)
 
 ### Trade-offs:
 Feature	Trade-off
+
 Idempotency	Ensures no duplicates, but extra storage for unique keys
+
 Concurrency	Safe parallel operations, slight latency due to transactions
+
 Background jobs	Async notifications → faster API response, eventual consistency
 
 ### Notes:
